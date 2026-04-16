@@ -112,12 +112,19 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 5000;
 
 const startServer = async () => {
-  await connectDB();
-  app.listen(PORT, () => {
-    console.log(`\n🚀 ProFlow API running on port ${PORT}`);
-    console.log(`📋 API docs: http://localhost:${PORT}/api`);
-    console.log(`💚 Health:   http://localhost:${PORT}/api/health\n`);
-  });
+  try {
+    await connectDB();
+    app.listen(PORT, () => {
+      console.log(`\n🚀 ProFlow API running on port ${PORT}`);
+      console.log(`📋 API docs: http://localhost:${PORT}/api`);
+      console.log(`💚 Health:   http://localhost:${PORT}/api/health\n`);
+    });
+  } catch (error) {
+    console.error('🔥 CRITICAL FATAL ERROR DURING STARTUP:');
+    console.error(error);
+    // Give Render 2 seconds to flush this log to the dashboard before crashing
+    setTimeout(() => process.exit(1), 2000);
+  }
 };
 
 startServer();
